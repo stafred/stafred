@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+define("AUTOLOAD", __DIR__.'/vendor/autoload.php');
+
+$info = [
+    ">>> [Stafer] Terminal @ " . date ("Y"),
+    ">>> [Stafer] Terminal (Error: autoload.php not found)",
+];
+
+if (file_exists(AUTOLOAD)) {
+    require __DIR__.'/vendor/autoload.php';
+    echo $info[0];
+} else {
+    echo $info[1];
+}
+
+die;
