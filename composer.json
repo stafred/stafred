@@ -20,8 +20,10 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": "7.3",
-        "filp/whoops": "dev-master",
-        "symfony/console": "4.4.x-dev"
+        "php": "7.3.*",
+        "filp/whoops": "2.*",
+        "symfony/console": "4.*",
+        "stafred/detector": "dev-master",
+        "stafred/framework": "dev-master"
     }
 }
