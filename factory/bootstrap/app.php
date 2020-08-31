@@ -244,7 +244,7 @@ final class App extends AppHelper implements IApp, IAppMethods
             ? constant('ERROR_PAGE_REPORTING')
             : $level;
 
-        error_reporting($level);
+        //error_reporting($level);
     }
 
     /**
@@ -254,7 +254,7 @@ final class App extends AppHelper implements IApp, IAppMethods
         $level = $this->isDefined('ERROR_PAGE_DISPLAY')
             ?  constant('ERROR_PAGE_DISPLAY')
             : $level;
-        ini_set('display_errors', $level);
+        //ini_set('display_errors', $level);
     }
 }
 

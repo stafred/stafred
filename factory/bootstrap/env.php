@@ -1,0 +1,25 @@
+<?php
+/**
+ * list of environment variables to check.
+ */
+
+return [
+    'APP_SECRET_KEY',
+    'APP_DEBUG_DISPLAY',
+    'APP_TIME_DISPLAY',
+    'ERROR_PAGE_INFO',
+    'ERROR_FILE_LOG',
+    'ERROR_PAGE_DISPLAY',
+    'ERROR_PAGE_REPORTING',
+    'ERROR_NAME_LOG',
+    'ERROR_PATH_LOG',
+    'SESSION_FILE_DIRPATH',
+    'SESSION_FILE_PREFIX',
+    'SESSION_SECURITY_NAME',
+    'SESSION_HTTPS_ENABLE',
+    'COOKIE_SET_EXPIRES',
+    'COOKIE_SET_PATH',
+    'COOKIE_SET_DOMAIN',
+    'COOKIE_SET_HTTPONLY',
+    'COOKIE_SET_SAMESITE'
+];
