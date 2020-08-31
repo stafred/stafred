@@ -5,35 +5,37 @@
  * @author   Stafred <stafred.framework@gmail.com>
  */
 
-/**
- * Interface IApp
- */
+/*******************************************************************/
+/*******************************************************************/
+/*******************************************************************/
+
 interface IApp
 {
-    const AUTOLOAD = __DIR__ . '/../../vendor/autoload.php';
+    /*main error number of the web application.*/
+    const ERROR_SERVER      = 500;
+    const FORBIDDEN_SERVER  = 403;
 
-    const ENVIRONMENT = '../.env';
+    /*main application configuration for error handling.*/
+    const ENV_DEBUG = 'APP_DEBUG_DISPLAY';
+    const ENV_INFO  = 'ERROR_PAGE_INFO';
+    const ENV_NAME  = 'ERROR_NAME_LOG';
+    const ENV_PATH  = 'ERROR_PATH_LOG';
+}
 
-    const ERROR_SERVER = 500;
+/*******************************************************************/
+/*******************************************************************/
+/*******************************************************************/
 
-    const ENV = [
-        'APP_DEBUG',
-        'APP_TIME_DISPLAY',
-        'ERROR_INFO',
-        'ERROR_LOG',
-        'ERROR_DISPLAY',
-        'ERROR_REPORTING',
-        'ERROR_NAME_LOG',
-        'ERROR_PATH_LOG',
-    ];
+interface IAppMethods
+{
+    /*application methods interface.*/
+    public function autoload(): void;
 
-    public function autoload();
+    public function debug(): void;
 
-    public function debug();
+    public function run(...$loader): void;
 
-    public function run(...$loader);
-
-    public function time();
+    public function time(): void;
 }
 
 /**
@@ -41,25 +43,40 @@ interface IApp
  */
 class AppHelper
 {
+    const AUTOLOAD = __DIR__ . '/../../vendor/autoload.php';
+
+    const ENVIRONMENT = '../.env';
+
+    protected $ENV_ALL = [];
+
     /**
      * @throws Exception
      */
     protected function _autoload()
     {
-        if (!file_exists(IApp::AUTOLOAD)) {
-            throw new Exception("Autoload file not found.", 500);
+        if (!file_exists(self::AUTOLOAD)) {
+            throw new Exception(
+                "Autoload file not found.",
+                IApp::FORBIDDEN_SERVER
+            );
         }
-        require_once IApp::AUTOLOAD;
+        require_once self::AUTOLOAD;
     }
 
-    protected function _debug()
+    /**
+     * @param mixed $debug
+     * @param mixed $info
+     * @param mixed $name
+     * @param mixed $path
+     */
+    protected function _debug($debug, $info, $name, $path)
     {
-        $detector = new \Detector\Run;
-        $detector->setErrorDebug('APP_DEBUG');
-        $detector->setErrorInfo('ERROR_INFO');
-        $detector->setErrorNameLog('ERROR_NAME_LOG');
-        $detector->setErrorPathLog('ERROR_PATH_LOG');
-        $detector->make(function(){
+        $detector = new \Detector\Run();
+        $detector->setErrorDebug($debug);
+        $detector->setErrorInfo($info);
+        $detector->setErrorNameLog($name);
+        $detector->setErrorPathLog($path);
+        $detector->make(function () {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
             $whoops->register();
@@ -86,19 +103,41 @@ class AppHelper
     }
 
     /**
+     * @return mixed
+     */
+    protected function _env()
+    {
+        return require_once __DIR__ . '/env.php';
+    }
+
+    /**
      * @throws Exception
      */
     protected function openEnv()
     {
-        if (!file_exists(IApp::ENVIRONMENT)) {
-            throw new Exception(
-                "ENV file not found",
-                IApp::ERROR_SERVER
-            );
+        try {
+            if (!file_exists(self::ENVIRONMENT)) {
+                throw new Exception(
+                    "ENV file not found",
+                    IApp::FORBIDDEN_SERVER
+                );
+            }
+            $this->define();
+            $this->inspector();
+        } catch (Exception $e) {
+            $detector = new \Detector\Run();
+            $detector->exceptionHandler($e);
         }
 
-        $this->define();
-        $this->addConst();
+    }
+
+    /**
+     * @param string $value
+     * @return bool
+     */
+    protected function isDefined(string $value): bool
+    {
+        return defined($value);
     }
 
     /**
@@ -107,7 +146,7 @@ class AppHelper
     private function define()
     {
         $env = (array)parse_ini_file(
-            IApp::ENVIRONMENT,
+            self::ENVIRONMENT,
             true,
             INI_SCANNER_TYPED
         );
@@ -123,48 +162,99 @@ class AppHelper
     /**
      * @throws Exception
      */
-    private function addConst()
+    private function inspector()
     {
-        $c = count(IApp::ENV);
-
+        $c = count($this->ENV_ALL);
         for ($i = 0; $i < $c; ++$i) {
-            if (!defined(IApp::ENV[$i])) {
-                throw new Exception(IApp::ENV[$i] . ": Environment variable not found");
+            if (!defined($this->ENV_ALL[$i])) {
+                throw new Exception(
+                    $this->ENV_ALL[$i] . ": Environment variable not found",
+                    IApp::FORBIDDEN_SERVER
+                );
             }
         }
+
+        if (!class_exists("ZipArchive")) {
+            throw new Exception(
+                "You dont have installed zip archive Please, install now!!!",
+                IApp::FORBIDDEN_SERVER
+            );
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    private function isDevelopment(): bool
+    {
+        return defined("APP_DEVELOPMENT_ENABLE") ? APP_DEVELOPMENT_ENABLE : false;
     }
 }
 
 /**
  * Class App
  */
-final class App extends AppHelper implements IApp
+final class App extends AppHelper implements IApp, IAppMethods
 {
+    /**
+     * App constructor.
+     */
+    public function __construct()
+    {
+        $this->ENV_ALL = $this->_env();
+    }
+
     /**
      * @throws Exception
      */
-    public function autoload()
+    public function autoload(): void
     {
         parent::_autoload();
         $this->openEnv();
     }
 
-    public function debug()
+    public function debug(): void
     {
-        parent::_debug();
+        parent::_debug(
+            self::ENV_DEBUG,
+            self::ENV_INFO,
+            self::ENV_NAME,
+            self::ENV_PATH
+        );
     }
 
     /**
      * @param mixed ...$loader
      */
-    public function run(...$loader)
+    public function run(...$loader): void
     {
         parent::_run($loader);
     }
 
-    public function time()
+    public function time(): void
     {
         parent::_time();
+    }
+
+    /**
+     * @param int $level
+     */
+    public function errorsReporting(int $level = 0){
+        $level = $this->isDefined('ERROR_PAGE_REPORTING')
+            ? constant('ERROR_PAGE_REPORTING')
+            : $level;
+
+        error_reporting($level);
+    }
+
+    /**
+     * @param int $level
+     */
+    public function errorsDisplay(int $level = 0){
+        $level = $this->isDefined('ERROR_PAGE_DISPLAY')
+            ?  constant('ERROR_PAGE_DISPLAY')
+            : $level;
+        ini_set('display_errors', $level);
     }
 }
 

@@ -16,6 +16,8 @@
         "classmap": [
         ],
         "files": [
+            "bin/functions/functions.php",
+            "bin/routes/routes.php"
         ]
     },
     "minimum-stability": "dev",
@@ -24,6 +26,14 @@
         "filp/whoops": "2.*",
         "symfony/console": "4.*",
         "stafred/detector": "dev-master",
-        "stafred/framework": "dev-master"
+        "stafred/framework": "dev-master",
+        "stafred/critbackup": "dev-master",
+        "symfony/var-dumper": "5.*",
+        "ext-json": "*"
+    },
+    "scripts": {
+        "pre-update-cmd": [
+            "@php -r \"file_exists('.env') || copy('.ini', '.env');\""
+        ]
     }
 }
