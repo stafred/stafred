@@ -20,7 +20,7 @@
             "bin/routes/routes.php"
         ]
     },
-    "minimum-stability": "dev-master",
+    "minimum-stability": "dev",
     "require": {
         "php": "7.3.*",
         "filp/whoops": "2.*",
