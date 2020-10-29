@@ -12,13 +12,16 @@ define("STAFRED_START", microtime(true));
  > -------------------------------------------------
  */
 $app = require_once "../factory/bootstrap/app.php";
+$app->autoload();
 /*
  > -------------------------------------------------
  >>>>>  Setting Errors  >>>>>>
  > -------------------------------------------------
  */
-//$app->errorsReporting();
-//$app->errorsDisplay();
+$app->errorsReporting();
+$app->errorsDisplay();
+
+
 /*
  > -------------------------------------------------
  >>>>>  Startup And Setting Debug  >>>>>>
@@ -30,6 +33,7 @@ $app->debug();
  >>>>>  Run The Application  >>>>>>
  > -------------------------------------------------
  */
+
 $app->run(
     \Stafred\Kernel\LoaderBuilder::class,
 );
@@ -39,3 +43,5 @@ $app->run(
  > -------------------------------------------------
  */
 $app->time();
+
+//debug(\Stafred\Cache\CacheStorage::getAll());

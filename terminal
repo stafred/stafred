@@ -2,9 +2,12 @@
 <?php
 define("AUTOLOAD", __DIR__.'/vendor/autoload.php');
 
+use Stafred\Kernel\Console;
+
 $info = [
-    ">>> [Stafer] Terminal @ " . date ("Y"),
-    ">>> [Stafer] Terminal (Error: autoload.php not found)",
+    "\n>>> [Stafred] Terminal @ " . date ("Y") . "\n\n",
+    "\n>>> [Stafred] Terminal (Error: autoload.php not found)\n\n",
+    "\n>>> [Stafred] Terminal close\n\n",
 ];
 
 if (file_exists(AUTOLOAD)) {
@@ -14,4 +17,6 @@ if (file_exists(AUTOLOAD)) {
     echo $info[1];
 }
 
+Console::run();
+echo $info[2];
 die;

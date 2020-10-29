@@ -57,7 +57,7 @@ class AppHelper
         if (!file_exists(self::AUTOLOAD)) {
             throw new Exception(
                 "Autoload file not found.",
-                IApp::FORBIDDEN_SERVER
+                //IApp::FORBIDDEN_SERVER
             );
         }
         require_once self::AUTOLOAD;
@@ -98,7 +98,7 @@ class AppHelper
     protected function _time()
     {
         if (APP_TIME_DISPLAY) {
-            echo "<small>" . (microtime(true) - STAFRED_START) . "</small>";
+            echo "<div class='timing'><small><b>Timing Result: </b>" . (microtime(true) - STAFRED_START) . "</small></div>";
         }
     }
 
@@ -119,7 +119,7 @@ class AppHelper
             if (!file_exists(self::ENVIRONMENT)) {
                 throw new Exception(
                     "ENV file not found",
-                    IApp::FORBIDDEN_SERVER
+                    //IApp::FORBIDDEN_SERVER
                 );
             }
             $this->define();
@@ -169,7 +169,7 @@ class AppHelper
             if (!defined($this->ENV_ALL[$i])) {
                 throw new Exception(
                     $this->ENV_ALL[$i] . ": Environment variable not found",
-                    IApp::FORBIDDEN_SERVER
+                    //IApp::FORBIDDEN_SERVER
                 );
             }
         }
@@ -177,7 +177,7 @@ class AppHelper
         if (!class_exists("ZipArchive")) {
             throw new Exception(
                 "You dont have installed zip archive Please, install now!!!",
-                IApp::FORBIDDEN_SERVER
+                //IApp::FORBIDDEN_SERVER
             );
         }
     }
@@ -243,8 +243,7 @@ final class App extends AppHelper implements IApp, IAppMethods
         $level = $this->isDefined('ERROR_PAGE_REPORTING')
             ? constant('ERROR_PAGE_REPORTING')
             : $level;
-
-        //error_reporting($level);
+        error_reporting($level);
     }
 
     /**
@@ -254,7 +253,7 @@ final class App extends AppHelper implements IApp, IAppMethods
         $level = $this->isDefined('ERROR_PAGE_DISPLAY')
             ?  constant('ERROR_PAGE_DISPLAY')
             : $level;
-        //ini_set('display_errors', $level);
+        ini_set('display_errors', $level);
     }
 }
 
