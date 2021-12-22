@@ -7,28 +7,30 @@
 
 /*******************************************************************/
 /*******************************************************************/
+
 /*******************************************************************/
 
 interface IApp
 {
     /*main error number of the web application.*/
-    const ERROR_SERVER      = 500;
-    const FORBIDDEN_SERVER  = 403;
+    const ERROR_SERVER = 500;
+    const FORBIDDEN_SERVER = 403;
 
     /*main application configuration for error handling.*/
     const ENV_DEBUG = 'APP_DEBUG_DISPLAY';
-    const ENV_INFO  = 'ERROR_PAGE_INFO';
-    const ENV_NAME  = 'ERROR_NAME_LOG';
-    const ENV_PATH  = 'ERROR_PATH_LOG';
+    const ENV_INFO = 'ERROR_PAGE_INFO';
+    const ENV_NAME = 'ERROR_NAME_LOG';
+    const ENV_PATH = 'ERROR_PATH_LOG';
 }
 
 /*******************************************************************/
 /*******************************************************************/
+
 /*******************************************************************/
 
 interface IAppMethods
 {
-    /*application methods interface.*/
+    /*application methods interfaces.*/
     public function autoload(): void;
 
     public function debug(): void;
@@ -43,7 +45,7 @@ interface IAppMethods
  */
 class AppHelper
 {
-    const AUTOLOAD = __DIR__ . '/../../vendor/autoload.php';
+    const AUTOLOAD = '../vendor/autoload.php';
 
     const ENVIRONMENT = '../.env';
 
@@ -55,10 +57,7 @@ class AppHelper
     protected function _autoload()
     {
         if (!file_exists(self::AUTOLOAD)) {
-            throw new Exception(
-                "Autoload file not found.",
-                //IApp::FORBIDDEN_SERVER
-            );
+            die("<center><b>Fatal Error:</b> you need to reinstall the framework as some components are missing...</center>");
         }
         require_once self::AUTOLOAD;
     }
@@ -71,7 +70,9 @@ class AppHelper
      */
     protected function _debug($debug, $info, $name, $path)
     {
-        $detector = new \Detector\Run();
+        $detector = new \Detector\Run(
+            \Stafred\Kernel\AppShutdown::class
+        );
         $detector->setErrorDebug($debug);
         $detector->setErrorInfo($info);
         $detector->setErrorNameLog($name);
@@ -98,7 +99,9 @@ class AppHelper
     protected function _time()
     {
         if (APP_TIME_DISPLAY) {
-            echo "<div class='timing'><small><b>Timing Result: </b>" . (microtime(true) - STAFRED_START) . "</small></div>";
+            echo "<div class='timing'><small><b>Timing Result: </b>" .
+                (microtime(true) - STAFRED_START) .
+                "</small></div>";
         }
     }
 
@@ -117,15 +120,14 @@ class AppHelper
     {
         try {
             if (!file_exists(self::ENVIRONMENT)) {
-                throw new Exception(
-                    "ENV file not found",
-                    //IApp::FORBIDDEN_SERVER
-                );
+                die("<center><b>Fatal Error:</b> you need to reinstall the framework as some components are missing...</center>");
             }
             $this->define();
             $this->inspector();
         } catch (Exception $e) {
-            $detector = new \Detector\Run();
+            $detector = new \Detector\Run(
+                \Stafred\Kernel\AppShutdown::class
+            );
             $detector->exceptionHandler($e);
         }
 
@@ -167,18 +169,12 @@ class AppHelper
         $c = count($this->ENV_ALL);
         for ($i = 0; $i < $c; ++$i) {
             if (!defined($this->ENV_ALL[$i])) {
-                throw new Exception(
-                    $this->ENV_ALL[$i] . ": Environment variable not found",
-                    //IApp::FORBIDDEN_SERVER
-                );
+                die("<center><b>Fatal Error:</b> {$this->ENV_ALL[$i]} environment variable not found</center>");
             }
         }
 
         if (!class_exists("ZipArchive")) {
-            throw new Exception(
-                "You dont have installed zip archive Please, install now!!!",
-                //IApp::FORBIDDEN_SERVER
-            );
+            die("<center><b>Fatal Error:</b> you dont have installed zip archive, please, install now!!!</center>");
         }
     }
 
@@ -211,6 +207,7 @@ final class App extends AppHelper implements IApp, IAppMethods
     {
         parent::_autoload();
         $this->openEnv();
+        require_once "../bin/routes/web.php";
     }
 
     public function debug(): void
@@ -239,7 +236,8 @@ final class App extends AppHelper implements IApp, IAppMethods
     /**
      * @param int $level
      */
-    public function errorsReporting(int $level = 0){
+    public function errorsReporting(int $level = 0)
+    {
         $level = $this->isDefined('ERROR_PAGE_REPORTING')
             ? constant('ERROR_PAGE_REPORTING')
             : $level;
@@ -249,9 +247,10 @@ final class App extends AppHelper implements IApp, IAppMethods
     /**
      * @param int $level
      */
-    public function errorsDisplay(int $level = 0){
+    public function errorsDisplay(int $level = 0)
+    {
         $level = $this->isDefined('ERROR_PAGE_DISPLAY')
-            ?  constant('ERROR_PAGE_DISPLAY')
+            ? constant('ERROR_PAGE_DISPLAY')
             : $level;
         ini_set('display_errors', $level);
     }

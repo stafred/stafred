@@ -1,6 +1,6 @@
 {
     "name": "stafred/stafred",
-    "description": "PHP Project",
+    "description": "PHP Project For Framework",
     "license": "MIT",
     "authors": [
         {
@@ -25,13 +25,13 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": "7.4.*",
-        "filp/whoops": "2.*",
-        "symfony/console": "4.*",
-        "stafred/detector": "dev-master",
-        "stafred/framework": "dev-master",
-        "stafred/critbackup": "dev-master",
-        "symfony/var-dumper": "5.*"
+        "php": "8.0.*",
+        "filp/whoops": "*",
+        "symfony/console": "*",
+        "stafred/detector": "*",
+        "stafred/framework": "*",
+        "stafred/critbackup": "*",
+        "symfony/var-dumper": "*"
     },
     "scripts": {
         "pre-update-cmd": [

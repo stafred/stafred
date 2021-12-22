@@ -1,10 +1,7 @@
 <?php
-/**
- * Stafred Framework
- * @package  Stafred
- * @author   Stafred <stafred.framework@gmail.com>
- */
+
 define("STAFRED_START", microtime(true));
+define("STAFRED_ROOT",  dirname(__DIR__,1));
 
 /*
  > -------------------------------------------------
@@ -13,6 +10,7 @@ define("STAFRED_START", microtime(true));
  */
 $app = require_once "../factory/bootstrap/app.php";
 $app->autoload();
+
 /*
  > -------------------------------------------------
  >>>>>  Setting Errors  >>>>>>
@@ -37,11 +35,10 @@ $app->debug();
 $app->run(
     \Stafred\Kernel\LoaderBuilder::class,
 );
+
 /*
  > -------------------------------------------------
  >>>>>  Getting A Time The Application  >>>>>>
  > -------------------------------------------------
  */
 $app->time();
-
-//debug(\Stafred\Cache\CacheStorage::getAll());

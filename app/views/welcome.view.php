@@ -1,6 +1,6 @@
 <head>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="data:image/x-icon;" type="image/x-icon">
+    <?=x_icon();?>
     <title>Welcome, Strafred Page</title>
     <style>
         html,body {
